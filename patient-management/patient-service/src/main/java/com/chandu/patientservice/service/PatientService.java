@@ -4,19 +4,17 @@ import com.chandu.patientservice.dto.PatientResponseDTO;
 import com.chandu.patientservice.mapper.PatientMapper;
 import com.chandu.patientservice.model.Patient;
 import com.chandu.patientservice.repository.PatientRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class PatientSerive {
+public class PatientService {
 
 
-    @Autowired
-    private  PatientRepository patientRepository;
+    private final PatientRepository patientRepository;
 
-    public PatientSerive(PatientRepository patientRepository) {
+    public PatientService(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
     }
 
