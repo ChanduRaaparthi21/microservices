@@ -4,6 +4,7 @@ import com.chandu.patientservice.dto.PatientRequestDTO;
 import com.chandu.patientservice.dto.PatientResponseDTO;
 import com.chandu.patientservice.exception.EmailAlreadyExistsException;
 import com.chandu.patientservice.exception.PatientNotFoundException;
+import com.chandu.patientservice.grpc.BillingServiceGrpcClient;
 import com.chandu.patientservice.mapper.PatientMapper;
 import com.chandu.patientservice.model.Patient;
 import com.chandu.patientservice.repository.PatientRepository;
@@ -19,8 +20,11 @@ public class PatientService {
 
     private final PatientRepository patientRepository;
 
-    public PatientService(PatientRepository patientRepository) {
+    private final BillingServiceGrpcClient billingServiceGrpcClient;
+
+    public PatientService(PatientRepository patientRepository, BillingServiceGrpcClient billingServiceGrpcClient) {
         this.patientRepository = patientRepository;
+        this.billingServiceGrpcClient = billingServiceGrpcClient;
     }
 
 
@@ -35,6 +39,11 @@ public class PatientService {
             throw new EmailAlreadyExistsException("a patient with this email already exists " + patientRequestDTO.getEmail());
         }
         Patient newPatient = patientRepository.save(PatientMapper.toModel(patientRequestDTO));
+
+        billingServiceGrpcClient.createBillingAccount(newPatient.getId().toString()
+                , newPatient.getName()
+                ,newPatient.getEmail());
+
         return PatientMapper.toDto(newPatient);
     }
 
